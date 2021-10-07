@@ -1,10 +1,8 @@
 package allthecities
 
 import (
+	_ "embed"
 	"fmt"
-	"io"
-	"os"
-	"path/filepath"
 
 	"google.golang.org/protobuf/encoding/protowire"
 )
@@ -23,25 +21,11 @@ type City struct {
 	Lat         float64
 }
 
-var Source string
-
-func init() {
-	Source, _ = filepath.Abs("./cities-v3.1.0.pbf")
-}
+//go:embed cities-v3.1.0.pbf
+var data []byte
 
 func Load() ([]City, error) {
 	var offset, lastLon, lastLat int64
-
-	f, err := os.Open(Source)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-
-	data, err := io.ReadAll(f)
-	if err != nil {
-		return nil, err
-	}
 
 	cities := make([]City, 0)
 	for offset < int64(len(data)) {
